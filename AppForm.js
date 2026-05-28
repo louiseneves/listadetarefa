@@ -1,52 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-import Database from './Database';
-import {addDoc,db,collection,auth} from './config';
+import React, { useState, useEffect } from "react";
 
-export default function AppForm({ route,navigation }) {
-  const [tarefa, setTarefa] = useState('');  
-  const [editMode, setEditMode] = useState(route?.params?.edit ?? false); 
-  let id = route?.params && route?.params?.edit ? route.params.id : undefined; 
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+} from "react-native";
+import { addDoc, db, collection, auth } from "./config";
+
+export default function AppForm({ route, navigation }) {
+  const [tarefa, setTarefa] = useState("");
+  const [editMode, setEditMode] = useState(route?.params?.edit ?? false);
+  let id = route?.params && route?.params?.edit ? route.params.id : undefined;
   useEffect(() => {
     if (!id) return;
     setTarefa(route.params.item);
     setEditMode(route.params.edit);
-  }, [route])
-  function handleTarefaChange(tarefa) { 
+  }, [route?.params]);
+  function handleTarefaChange(tarefa) {
     setTarefa(tarefa);
   }
-  
-  async function handleButtonPress(){ 
+
+  async function handleButtonPress() {
     try {
       const user = auth.currentUser;
-          if (!user) {
-            console.error('Nenhum usuário autenticado.');
-            return;
-          }
-      if (!editMode){
-      const docRef = await addDoc(collection(db, "tarefa"), {
-        tarefa: tarefa,
-        userId: user.uid,
-      });
-      setTarefa("");   
-      setEditMode(false); 
-    route.params.ButtonPress();   
-    navigation.navigate('Lista');
-      console.log("Document written with ID: ", docRef.id);
-    }
+      if (!user) {
+        alert("Faça login novamente");
+        return;
+      }
+
+      if (!editMode) {
+        if (!tarefa.trim()) {
+          alert("Digite uma tarefa");
+          return;
+        }
+        const docRef = await addDoc(collection(db, "tarefa"), {
+          tarefa: tarefa,
+          userId: user.uid,
+        });
+        setTarefa("");
+        setEditMode(false);
+        route?.params?.ButtonPress?.();
+        navigation.navigate("Lista");
+        console.log("Document written with ID: ", docRef.id);
+      }
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   }
   return (
-    <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems:'center',
-    justifyContent: 'space-between', backgroundColor:'white',
-    elevation:4,paddingHorizontal:20 ,width:'100%'}}>
-        <Text style={{fontSize:20,padding:20}}   >Cadastro</Text>
-        <Text style={{fontSize:20,padding:20,color:'red'}} onPress={()=>{navigation.goBack()}}>Cancelar</Text>
-        </View>
+    <SafeAreaView
+  style={[
+    styles.container,
+    { paddingTop: StatusBar.currentHeight }
+  ]}
+>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          backgroundColor: "white",
+          elevation: 4,
+          paddingHorizontal: 20,
+          width: "100%",
+        }}
+      >
+        <Text style={{ fontSize: 20, padding: 20 }}>Cadastro</Text>
+        <Text
+          style={{ fontSize: 20, padding: 20, color: "red" }}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        >
+          Cancelar
+        </Text>
+      </View>
       <Text style={styles.title}>Tarefa</Text>
       <View style={styles.inputContainer}>
         <TextInput
@@ -54,62 +86,62 @@ export default function AppForm({ route,navigation }) {
           value={tarefa}
           onChangeText={handleTarefaChange}
           placeholder="Tarefa"
-           />
+        />
         <TouchableOpacity style={styles.button} onPress={handleButtonPress}>
           <Text style={styles.buttonText}>Salvar</Text>
         </TouchableOpacity>
       </View>
       <StatusBar style="light" />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#036FFC',
-    alignItems: 'center',
+    backgroundColor: "#036FFC",
+    alignItems: "center",
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 50,
   },
   inputContainer: {
     flex: 1,
     marginTop: 30,
-    width: '90%',
+    width: "90%",
     padding: 20,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    alignItems: 'stretch',
-    backgroundColor: '#fff'
+    alignItems: "stretch",
+    backgroundColor: "#fff",
   },
   input: {
     marginTop: 10,
     height: 60,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 10,
     paddingHorizontal: 24,
     fontSize: 16,
-    alignItems: 'stretch'
+    alignItems: "stretch",
   },
   button: {
     marginTop: 10,
     height: 60,
-    backgroundColor: '#036FFC',
+    backgroundColor: "#036FFC",
     borderRadius: 10,
     paddingHorizontal: 24,
     fontSize: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     elevation: 20,
     shadowOpacity: 20,
-    shadowColor: '#ccc',
+    shadowColor: "#ccc",
   },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  }
+    color: "#fff",
+    fontWeight: "bold",
+  },
 });

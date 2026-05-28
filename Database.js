@@ -1,37 +1,37 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+
 import { auth } from "./config";
-export const Logins =(email,senha)=>{
-    signInWithEmailAndPassword(auth,email,senha).then(()=>{
-        alert('Logado');
-    }).catch(err=>{
-        console.log(err)
-    })
-}
-export const CadastrosLogin =(email,senha)=>{
-    createUserWithEmailAndPassword(auth,email,senha).then((userCredentials)=>{
-        const user = userCredentials.user;
-        uploadDataToFirestore(user);
-        alert('Inscrito');
-    }).catch(err=>{
-        console.log(err)
-    })
-}
-export const Logout =()=>{
-    signOut(auth).then(()=>{
-        alert('Sair');
-    }).catch(err=>{
-        console.log(err)
-    })
-}
-export const getLoggedInUserUid = () => {
-    const user = auth.currentUser;
-    if (user) {
-      // O usuário está autenticado, então podemos acessar o UID
-      const userUid = user.uid;
-      console.log('UID do usuário logado:', userUid);
-      return userUid;
-    } else {
-      console.log('Nenhum usuário autenticado.');
-      return null;
-    }
-  };
+
+export const Logins = async (email, senha) => {
+  try {
+    await signInWithEmailAndPassword(auth, email, senha);
+    alert("Login realizado com sucesso");
+  } catch (err) {
+    alert(err.message);
+    console.log(err);
+  }
+};
+
+export const CadastrosLogin = async (email, senha) => {
+  try {
+    await createUserWithEmailAndPassword(auth, email, senha);
+    alert("Conta criada com sucesso");
+  } catch (err) {
+    alert(err.message);
+    console.log(err);
+  }
+};
+
+export const Logout = async () => {
+  try {
+    await signOut(auth);
+    alert("Logout realizado");
+  } catch (err) {
+    alert(err.message);
+    console.log(err);
+  }
+};

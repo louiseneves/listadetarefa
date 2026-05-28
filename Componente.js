@@ -1,9 +1,7 @@
-import React,{useState,useEffect} from  'react';
+import React from  'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
-import Database from './Database';
 import { Edit, Trash } from 'react-native-feather';
-import { db,deleteDoc,doc,updateDoc} from './config';
+import { db,deleteDoc,doc} from './config';
 
 export default function AppItem(props) {
     const taskId = props.id;
@@ -30,16 +28,15 @@ export default function AppItem(props) {
        try {
             const tarefaId = props.id;
             if (!tarefaId) {
-              console.warn('ID da pergunta não encontrado.');
-              return;
+                console.warn('ID da tarefa não encontrado.');
+                return;
             }
             const tarefaRef = doc(db, 'tarefa', tarefaId);
             await deleteDoc(tarefaRef);
             // Recarregar as perguntas após a exclusão
             props.ButtonPress();
-            props.navigation.navigate("Lista", { id: props.id});
           } catch (error) {
-            console.error('Erro ao excluir pergunta:', error);
+            console.error('Erro ao excluir tarefa:', error);
           }
     }
     const handleEditPress = async () => {
@@ -104,10 +101,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 10,
         shadowColor: '#ccc',
         alignItems: 'center'
-    },
-    buttonText: {
-        color: '#fff',
-        fontWeight: 'bold',
     },
     textItem: {
         fontSize: 20,
