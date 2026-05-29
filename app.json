@@ -20,9 +20,9 @@
     },
     "android": {
       "package": "com.app.listadetarefas",
-      "versionCode": 22
+      "versionCode": 24
     },
-    "permissions": [],
+
     "web": {
       "favicon": "./assets/imagem.png"
     },
@@ -41,7 +41,7 @@
           }
         }
       ],
-      "expo-font"
+      "expo-asset"
     ]
   }
 }
