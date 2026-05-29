@@ -20,7 +20,7 @@
     },
     "android": {
       "package": "com.app.listadetarefas",
-      "versionCode": 21
+      "versionCode": 22
     },
     "permissions": [],
     "web": {
